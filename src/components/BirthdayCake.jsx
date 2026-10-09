@@ -32,6 +32,16 @@ function Sprinkles({ items }) {
   ))
 }
 
+const sparks = [
+  { left: '3%', top: '18%', size: 16, color: '#ffd166', delay: '0s' },
+  { left: '87%', top: '12%', size: 13, color: '#59b8ff', delay: '.4s' },
+  { left: '92%', top: '48%', size: 15, color: '#ff2d7e', delay: '.9s' },
+  { left: '0%', top: '56%', size: 13, color: '#3fe0bd', delay: '1.3s' },
+  { left: '20%', top: '-6%', size: 12, color: '#a259ff', delay: '.7s' },
+  { left: '72%', top: '-8%', size: 15, color: '#ffcf3f', delay: '1.6s' },
+  { left: '48%', top: '2%', size: 11, color: '#ffffff', delay: '1.1s' },
+]
+
 export default function BirthdayCake({ onCelebrate, age = config.age }) {
   const [blown, setBlown] = useState(false)
   const candleCount = Math.max(1, Math.min(age, 9))
@@ -65,6 +75,7 @@ export default function BirthdayCake({ onCelebrate, age = config.age }) {
         >
           <div className={`cake ${blown ? 'is-blown' : ''}`}>
             <div className="cake-glow" aria-hidden="true" />
+            <span className="cake-halo" aria-hidden="true" />
 
             <div className="candles">
               {Array.from({ length: candleCount }).map((_, i) => (
@@ -96,6 +107,23 @@ export default function BirthdayCake({ onCelebrate, age = config.age }) {
             </div>
 
             <div className="cake-plate" />
+
+            {sparks.map((s, i) => (
+              <span
+                key={i}
+                className="spark"
+                aria-hidden="true"
+                style={{
+                  left: s.left,
+                  top: s.top,
+                  color: s.color,
+                  fontSize: s.size,
+                  animationDelay: s.delay,
+                }}
+              >
+                ✦
+              </span>
+            ))}
           </div>
         </motion.div>
 
