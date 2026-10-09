@@ -18,7 +18,7 @@ const item = {
   },
 }
 
-export default function Hero({ onCelebrate, age = config.age }) {
+export default function Hero({ age = config.age }) {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -47,14 +47,6 @@ export default function Hero({ onCelebrate, age = config.age }) {
             {config.greeting} {config.subGreeting}
           </motion.p>
           <motion.div className="hero-actions" variants={item}>
-            <motion.button
-              className="btn"
-              onClick={onCelebrate}
-              whileHover={{ scale: 1.06, y: -4 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              🎂 Tiup Lilin
-            </motion.button>
             <motion.a
               className="btn ghost"
               href="#galeri"

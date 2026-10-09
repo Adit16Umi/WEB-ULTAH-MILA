@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import QRCode from 'qrcode'
+import { heartQrDataUrl } from '../utils/heartQr'
 
 const MONTHS = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -22,15 +22,35 @@ export default function SettingsPanel({ open, onClose, birthDate, isOwner, onSav
     let alive = true
     setQrWaiting('')
     setQrCelebration('')
-    const shared = { errorCorrectionLevel: 'H', margin: 1, width: 260 }
-    QRCode.toDataURL(
-      `${window.location.origin}${window.location.pathname}?d=${form.day}&m=${form.month}&y=${form.year}#waiting`,
-      { ...shared, color: { dark: '#6d28d9', light: '#ffffff' } },
-    ).then((url) => alive && setQrWaiting(url))
-    QRCode.toDataURL(
-      `${window.location.origin}${window.location.pathname}#celebration`,
-      { ...shared, color: { dark: '#d6006e', light: '#ffffff' } },
-    ).then((url) => alive && setQrCelebration(url))
+    const waitingPalette = {
+      bgTop: '#efe6ff',
+      bgBottom: '#dcc9ff',
+      heartFill: '#faf6ff',
+      heartStroke: '#7c3aed',
+      module: '#6d28d9',
+    }
+    const celebrationPalette = {
+      bgTop: '#ffe3f0',
+      bgBottom: '#ffbcdc',
+      heartFill: '#fff6fb',
+      heartStroke: '#ff2d87',
+      module: '#d6006e',
+    }
+    Promise.all([
+      Promise.resolve().then(() =>
+        heartQrDataUrl(
+          `${window.location.origin}${window.location.pathname}?d=${form.day}&m=${form.month}&y=${form.year}#waiting`,
+          waitingPalette,
+        ),
+      ),
+      Promise.resolve().then(() =>
+        heartQrDataUrl(`${window.location.origin}${window.location.pathname}#celebration`, celebrationPalette),
+      ),
+    ]).then(([w, c]) => {
+      if (!alive) return
+      setQrWaiting(w)
+      setQrCelebration(c)
+    })
     return () => {
       alive = false
     }
