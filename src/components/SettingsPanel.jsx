@@ -48,6 +48,7 @@ export default function SettingsPanel({ open, onClose, birthDate, onSave, onRese
                 Tanggal
                 <input
                   type="number"
+                  inputMode="numeric"
                   min="1"
                   max="31"
                   value={form.day}
@@ -68,6 +69,7 @@ export default function SettingsPanel({ open, onClose, birthDate, onSave, onRese
                 Tahun
                 <input
                   type="number"
+                  inputMode="numeric"
                   min="1900"
                   max="2100"
                   value={form.year}

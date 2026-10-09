@@ -1028,14 +1028,18 @@ section {
   position: fixed;
   inset: 0;
   z-index: 130;
-  display: grid;
-  place-items: center;
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 20px;
   background: rgba(74, 29, 58, 0.5);
   backdrop-filter: blur(8px);
 }
 
 .settings-panel {
+  margin: auto;
   width: min(440px, 94vw);
   padding: 30px;
   border-radius: 26px;
@@ -1185,6 +1189,9 @@ section {
   .photo-wrap { order: -1; min-height: 320px; }
   .count-grid { grid-template-columns: repeat(2, 1fr); }
   .settings-fields { grid-template-columns: 1fr 1fr; }
+  .settings-fields input,
+  .settings-fields select { font-size: 16px; }
+  .settings-panel { padding: 24px 20px; }
   .nav-links { display: none; }
   .slider { height: 58vh; }
   .slide-text { padding: 30px 24px 64px; }
@@ -1206,6 +1213,7 @@ section {
   .music-btn,
   .surprise-card,
   .surprise,
+  .settings-overlay,
   .lightbox { backdrop-filter: none; }
 }
 
