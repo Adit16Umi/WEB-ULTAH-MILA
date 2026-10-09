@@ -18,10 +18,13 @@ const base = 'ultah-mila'
 const W = 1200
 const H = 1200
 const QUIET = 4
-const HEART = '#ff2d87'
-const HEART_LIGHT = '#ff8fc0'
-const MODULE = '#c2006a'
-const CARD = '#ffffff'
+
+const BG_TOP = '#ffe6f2'
+const BG_BOTTOM = '#ffc4de'
+const HEART_FILL = '#fff6fb'
+const HEART_STROKE = '#ff2d87'
+const MODULE = '#d6006e'
+const LIGHT = HEART_FILL
 
 const fmt = (n) => Math.round(n * 100) / 100
 
@@ -43,9 +46,7 @@ function heartPoints(steps = 2400) {
   const ys = raw.map((p) => p[1])
   const minX = Math.min(...xs), maxX = Math.max(...xs)
   const minY = Math.min(...ys), maxY = Math.max(...ys)
-  const targetW = W * 0.94
-  const targetH = H * 0.9
-  const scale = Math.min(targetW / (maxX - minX), targetH / (maxY - minY))
+  const scale = Math.min((W * 0.94) / (maxX - minX), (H * 0.9) / (maxY - minY))
   const midX = (minX + maxX) / 2
   const midY = (minY + maxY) / 2
   const cx = W / 2
@@ -71,9 +72,7 @@ for (let x = 0; x < W; x++) {
     const [x1, y1] = heart[i]
     const [x2, y2] = heart[(i + 1) % heart.length]
     if (x1 === x2) continue
-    const lo = Math.min(x1, x2)
-    const hi = Math.max(x1, x2)
-    if (x < lo || x > hi) continue
+    if (x < Math.min(x1, x2) || x > Math.max(x1, x2)) continue
     const t = (x - x1) / (x2 - x1)
     const y = y1 + t * (y2 - y1)
     if (y < mn) mn = y
@@ -82,7 +81,7 @@ for (let x = 0; x < W; x++) {
   if (mn !== Infinity) { topY[x] = mn; bottomY[x] = mx }
 }
 
-/* ---------- 4. Largest axis-aligned square inscribed in the heart ---------- */
+/* ---------- 4. Largest axis-aligned block inscribed in the heart ---------- */
 function largestInscribedSquare() {
   const cx = W / 2
   let best = 0
@@ -110,21 +109,27 @@ function largestInscribedSquare() {
 }
 
 const sq = largestInscribedSquare()
-const cardSide = sq.size * 0.9
-const cardX = W / 2 - cardSide / 2
-const cardY = sq.top + sq.size / 2 - cardSide / 2
+const blockSide = sq.size * 0.9
+const blockX = W / 2 - blockSide / 2
+const blockY = sq.top + sq.size / 2 - blockSide / 2
 
-/* ---------- 5. QR module layout inside the card ---------- */
-const pad = cardSide * 0.055
-const inner = cardSide - pad * 2
+/* ---------- 5. QR module layout ---------- */
+const pad = blockSide * 0.02
+const inner = blockSide - pad * 2
 const ms = inner / (N + QUIET * 2)
 const qx = W / 2 - (N * ms) / 2
-const qy = cardY + cardSide / 2 - (N * ms) / 2
+const qy = blockY + blockSide / 2 - (N * ms) / 2
 
 const finder = (r, c) =>
   (r < 7 && c < 7) || (r < 7 && c >= N - 7) || (r >= N - 7 && c < 7)
 
 /* ---------- 6. Helpers ---------- */
+function heartPathAt(cx, cy, size, fill) {
+  const w = size * 0.5
+  const h = w * 0.9
+  return `<path d="M ${cx} ${cy + h * 0.42} C ${cx - w} ${cy - h * 0.3} ${cx - w * 0.35} ${cy - h * 1.0} ${cx} ${cy - h * 0.4} C ${cx + w * 0.35} ${cy - h * 1.0} ${cx + w} ${cy - h * 0.3} ${cx} ${cy + h * 0.42} Z" fill="${fill}"/>`
+}
+
 function roundedModule(r, c) {
   const x = qx + c * ms
   const y = qy + r * ms
@@ -138,16 +143,14 @@ function finderShape(r0, c0) {
   const x = qx + c0 * ms
   const y = qy + r0 * ms
   const outer = 7 * ms
-  const rO = ms * 1.4
-  const rI = ms * 1.0
   return (
-    `<rect x="${fmt(x)}" y="${fmt(y)}" width="${fmt(outer)}" height="${fmt(outer)}" rx="${fmt(rO)}" fill="${MODULE}"/>` +
-    `<rect x="${fmt(x + ms)}" y="${fmt(y + ms)}" width="${fmt(5 * ms)}" height="${fmt(5 * ms)}" rx="${fmt(rI)}" fill="${CARD}"/>` +
+    `<rect x="${fmt(x)}" y="${fmt(y)}" width="${fmt(outer)}" height="${fmt(outer)}" rx="${fmt(ms * 1.4)}" fill="${MODULE}"/>` +
+    `<rect x="${fmt(x + ms)}" y="${fmt(y + ms)}" width="${fmt(5 * ms)}" height="${fmt(5 * ms)}" rx="${fmt(ms)}" fill="${LIGHT}"/>` +
     `<rect x="${fmt(x + 2 * ms)}" y="${fmt(y + 2 * ms)}" width="${fmt(3 * ms)}" height="${fmt(3 * ms)}" rx="${fmt(ms * 0.6)}" fill="${MODULE}"/>`
   )
 }
 
-/* ---------- 7. Build SVG ---------- */
+/* ---------- 7. Build modules ---------- */
 let modules = ''
 const finderCells = [[0, 0], [0, N - 7], [N - 7, 0]]
 for (let r = 0; r < N; r++) {
@@ -159,63 +162,49 @@ for (let r = 0; r < N; r++) {
 }
 for (const [r0, c0] of finderCells) modules += finderShape(r0, c0)
 
-/* center love logo */
+/* center love logo (blends: no visible box) */
 const cardCx = W / 2
-const cardCy = cardY + cardSide / 2
+const cardCy = blockY + blockSide / 2
 const logoS = ms * 5.2
-const hx = cardCx
-const hy = cardCy
-const hw = logoS * 0.62
-const hh = hw * 0.9
 modules +=
-  `<rect x="${fmt(cardCx - logoS * 0.62)}" y="${fmt(cardCy - logoS * 0.62)}" width="${fmt(logoS * 1.24)}" height="${fmt(logoS * 1.24)}" rx="${fmt(logoS * 0.32)}" fill="${CARD}"/>` +
-  `<path d="M ${hx} ${hy + hh * 0.42} C ${hx - hw} ${hy - hh * 0.3} ${hx - hw * 0.35} ${hy - hh * 1.0} ${hx} ${hy - hh * 0.4} C ${hx + hw * 0.35} ${hy - hh * 1.0} ${hx + hw} ${hy - hh * 0.3} ${hx} ${hy + hh * 0.42} Z" fill="${MODULE}"/>`
+  `<rect x="${fmt(cardCx - logoS * 0.62)}" y="${fmt(cardCy - logoS * 0.62)}" width="${fmt(logoS * 1.24)}" height="${fmt(logoS * 1.24)}" rx="${fmt(logoS * 0.32)}" fill="${LIGHT}"/>` +
+  heartPathAt(cardCx, cardCy, logoS * 0.72, MODULE)
 
+/* heart outline path + small decorative hearts inside the free areas */
 const heartD = heart.map((p, i) => `${i === 0 ? 'M' : 'L'} ${fmt(p[0])} ${fmt(p[1])}`).join(' ') + ' Z'
 
-const tipHeartY = hMaxY - 46
-const deco = `
-  <path d="M ${W / 2} ${tipHeartY + 20} C ${W / 2 - 34} ${tipHeartY - 6} ${W / 2 - 14} ${tipHeartY - 34} ${W / 2} ${tipHeartY - 16} C ${W / 2 + 14} ${tipHeartY - 34} ${W / 2 + 34} ${tipHeartY - 6} ${W / 2} ${tipHeartY + 20} Z" fill="rgba(255,255,255,0.9)"/>
-  <circle cx="${fmt(hMinX + 70)}" cy="${fmt(hMinY + 150)}" r="6" fill="rgba(255,255,255,0.8)"/>
-  <circle cx="${fmt(hMaxX - 70)}" cy="${fmt(hMinY + 150)}" r="6" fill="rgba(255,255,255,0.8)"/>
-  <circle cx="${fmt(W / 2 - 60)}" cy="${fmt(hMaxY - 110)}" r="5" fill="rgba(255,255,255,0.75)"/>
-  <circle cx="${fmt(W / 2 + 60)}" cy="${fmt(hMaxY - 110)}" r="5" fill="rgba(255,255,255,0.75)"/>`
+const deco =
+  heartPathAt(hMinX + 150, hMinY + 170, 70, MODULE) +
+  heartPathAt(hMaxX - 150, hMinY + 170, 70, MODULE) +
+  heartPathAt(W / 2, hMaxY - 150, 60, MODULE)
 
+/* ---------- 8. SVG ---------- */
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#fff6fa"/>
-      <stop offset="100%" stop-color="#ffe3ef"/>
-    </linearGradient>
-    <linearGradient id="heart" x1="0" y1="0" x2="0.4" y2="1">
-      <stop offset="0%" stop-color="${HEART_LIGHT}"/>
-      <stop offset="55%" stop-color="${HEART}"/>
-      <stop offset="100%" stop-color="#e0006f"/>
+      <stop offset="0%" stop-color="${BG_TOP}"/>
+      <stop offset="100%" stop-color="${BG_BOTTOM}"/>
     </linearGradient>
     <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#ff2d87" flood-opacity="0.35"/>
-    </filter>
-    <filter id="cardShadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#c2185b" flood-opacity="0.25"/>
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#ff2d87" flood-opacity="0.35"/>
     </filter>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
-  <path d="${heartD}" fill="url(#heart)" filter="url(#soft)"/>
-  <rect x="${fmt(cardX)}" y="${fmt(cardY)}" width="${fmt(cardSide)}" height="${fmt(cardSide)}" rx="${fmt(cardSide * 0.055)}" fill="${CARD}" filter="url(#cardShadow)"/>
+  <path d="${heartD}" fill="${HEART_FILL}" stroke="${HEART_STROKE}" stroke-width="14" stroke-linejoin="round" filter="url(#soft)"/>
   ${modules}
   ${deco}
 </svg>
 `
 
-/* ---------- 8. Write files ---------- */
+/* ---------- 9. Write files ---------- */
 await mkdir(outDir, { recursive: true })
 await writeFile(resolve(outDir, `${base}.svg`), svg, 'utf8')
 await sharp(Buffer.from(svg), { density: 144 })
   .png()
   .toFile(resolve(outDir, `${base}.png`))
 
-console.log(`QR code (pink, bentuk love) dibuat untuk: ${url}`)
+console.log(`QR code (pink, menyatu bentuk love) dibuat untuk: ${url}`)
 console.log('File tersimpan (TIDAK ditampilkan di web):')
 console.log(`  - ${resolve(outDir, `${base}.png`)}`)
 console.log(`  - ${resolve(outDir, `${base}.svg`)}`)
-console.log(`  - QR ${N}x${N} modul, card ${Math.round(cardSide)}px, square ${sq.size}px`)
+console.log(`  - QR ${N}x${N} modul, block ${Math.round(blockSide)}px`)

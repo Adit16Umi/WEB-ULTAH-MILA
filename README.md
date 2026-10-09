@@ -79,8 +79,9 @@ vercel --prod
 ## 🔗 Barcode / QR code (di luar web)
 
 QR/barcode **tidak ditampilkan** di website. Buat filenya lewat script Node —
-hasilnya **QR warna pink dengan bentuk love** (modul bulat + logo hati di tengah,
-tetap bisa dipindai), lalu bagikan/cetak sendiri:
+hasilnya **QR warna pink yang menyatu dalam bentuk love** (tanpa kotak di
+dalamnya, modul bulat pink + logo hati, tetap bisa dipindai), lalu
+bagikan/cetak sendiri:
 
 ```bash
 # pakai URL default
