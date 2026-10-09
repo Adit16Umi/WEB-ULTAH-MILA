@@ -13,7 +13,7 @@ import ScrollProgress from './components/ScrollProgress'
 import WaitingRoom from './components/WaitingRoom'
 import BirthdayCake from './components/BirthdayCake'
 import SettingsPanel from './components/SettingsPanel'
-import { useBirthDate, getTurningAge } from './hooks/useBirthDate'
+import { useBirthDate, getAge } from './hooks/useBirthDate'
 import { useCountdown } from './hooks/useCountdown'
 import { useLowPower } from './hooks/useLowPower'
 import config from './config'
@@ -50,7 +50,7 @@ const simplePageVariants = {
 export default function App() {
   const { birthDate, update, reset } = useBirthDate()
   const { isToday } = useCountdown(birthDate.month, birthDate.day)
-  const age = getTurningAge(birthDate) || config.age
+  const age = getAge(birthDate) || config.age
   const lowPower = useLowPower()
   const variants = lowPower ? simplePageVariants : pageVariants
 
@@ -73,6 +73,19 @@ export default function App() {
     setPhase('waiting')
     window.scrollTo({ top: 0 })
   }, [])
+
+  const applySettings = useCallback(
+    (next) => {
+      update(next)
+      const now = new Date()
+      const isTodayNow =
+        Number(next.month) === now.getMonth() + 1 && Number(next.day) === now.getDate()
+      window.localStorage.removeItem(UNLOCK_KEY)
+      setPhase(isTodayNow ? 'celebration' : 'waiting')
+      window.scrollTo({ top: 0 })
+    },
+    [update],
+  )
 
   useEffect(() => {
     if (phase === 'waiting' && isToday) unlock()
@@ -155,7 +168,7 @@ export default function App() {
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         birthDate={birthDate}
-        onSave={update}
+        onSave={applySettings}
         onReset={reset}
         onPreview={() => {
           setSettingsOpen(false)
