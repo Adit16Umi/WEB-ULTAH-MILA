@@ -15,6 +15,7 @@ import BirthdayCake from './components/BirthdayCake'
 import SettingsPanel from './components/SettingsPanel'
 import { useBirthDate, getTurningAge } from './hooks/useBirthDate'
 import { useCountdown } from './hooks/useCountdown'
+import { useLowPower } from './hooks/useLowPower'
 import config from './config'
 
 const UNLOCK_KEY = 'birthday-unlocked'
@@ -40,10 +41,18 @@ const pageVariants = {
   exit: { opacity: 0, scale: 1.03, filter: 'blur(12px)' },
 }
 
+const simplePageVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+}
+
 export default function App() {
   const { birthDate, update, reset } = useBirthDate()
   const { isToday } = useCountdown(birthDate.month, birthDate.day)
   const age = getTurningAge(birthDate) || config.age
+  const lowPower = useLowPower()
+  const variants = lowPower ? simplePageVariants : pageVariants
 
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [surpriseOpen, setSurpriseOpen] = useState(false)
@@ -102,7 +111,7 @@ export default function App() {
         {phase === 'waiting' ? (
           <motion.div
             key="waiting"
-            variants={pageVariants}
+            variants={variants}
             initial="initial"
             animate="animate"
             exit="exit"
@@ -113,7 +122,7 @@ export default function App() {
         ) : (
           <motion.div
             key="celebration"
-            variants={pageVariants}
+            variants={variants}
             initial="initial"
             animate="animate"
             exit="exit"

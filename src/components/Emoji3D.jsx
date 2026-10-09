@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLowPower } from '../hooks/useLowPower'
 
 const CDN =
   'https://cdn.jsdelivr.net/gh/Tarikul-Islam-Anik/Microsoft-Teams-Animated-Emojis@master/Emojis'
@@ -63,9 +64,10 @@ const FALLBACK = {
 
 export default function Emoji3D({ name, size = 40, className = '', style, alt }) {
   const [failed, setFailed] = useState(false)
+  const lowPower = useLowPower()
   const entry = MAP[name]
 
-  if (!entry || failed) {
+  if (!entry || failed || lowPower) {
     return (
       <span
         className={`emoji-3d emoji-fallback ${className}`}

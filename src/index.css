@@ -1190,4 +1190,29 @@ section {
   .slide-text { padding: 30px 24px 64px; }
   .slider-arrow { width: 42px; height: 42px; font-size: 24px; }
   .cake { transform: scale(0.82); transform-origin: bottom center; }
+
+  /* --- hemat performa di HP --- */
+  .bg { animation: none; }
+  .blob { animation: none; filter: blur(46px); opacity: 0.38; }
+  .blob.b4,
+  .blob.b5 { display: none; }
+  .photo-ring::before { animation: none; }
+  .slide-bg { filter: blur(18px) brightness(0.75); }
+  .slide-img { animation: none; }
+  .nav { backdrop-filter: none; background: rgba(255, 255, 255, 0.85); }
+  .glass,
+  .count-card,
+  .settings-gear,
+  .music-btn,
+  .surprise-card,
+  .surprise,
+  .lightbox { backdrop-filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg,
+  .blob,
+  .float-item,
+  .photo-ring::before,
+  .slide-img { animation: none !important; }
 }

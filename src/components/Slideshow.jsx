@@ -61,8 +61,8 @@ export default function Slideshow() {
                   scale: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
                 }}
               >
-                <img className="slide-bg" src={active.src} alt="" aria-hidden="true" />
-                <img className="slide-img" src={active.src} alt={active.title} />
+                <img className="slide-bg" src={active.src} alt="" aria-hidden="true" decoding="async" draggable={false} />
+                <img className="slide-img" src={active.src} alt={active.title} decoding="async" draggable={false} />
                 <div className="slide-overlay" />
                 <div className="slide-text">
                   <motion.h3

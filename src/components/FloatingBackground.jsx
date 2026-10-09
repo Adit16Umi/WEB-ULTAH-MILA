@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import Emoji3D from './Emoji3D'
+import { useLowPower } from '../hooks/useLowPower'
 
 const NAMES = [
   'balloon', 'cherryBlossom', 'tulip', 'butterfly', 'sparkle', 'sparkles',
@@ -7,9 +8,12 @@ const NAMES = [
 ]
 
 export default function FloatingBackground({ count = 16 }) {
+  const lowPower = useLowPower()
+  const total = lowPower ? Math.min(count, 6) : count
+
   const items = useMemo(
     () =>
-      Array.from({ length: count }, (_, i) => ({
+      Array.from({ length: total }, (_, i) => ({
         id: i,
         left: Math.random() * 100,
         delay: Math.random() * 14,
@@ -17,7 +21,7 @@ export default function FloatingBackground({ count = 16 }) {
         size: 22 + Math.random() * 26,
         name: NAMES[Math.floor(Math.random() * NAMES.length)],
       })),
-    [count],
+    [total],
   )
 
   return (
