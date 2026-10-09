@@ -63,9 +63,9 @@ Data pribadi ada di satu file: **`src/config.js`**
 
 ### Mengganti foto
 
-1. Taruh fotomu di folder **`public/images/galeri/`** (misal `foto1.jpg` … `foto6.jpg`).
+1. Taruh fotomu di folder **`public/images/galeri/`** (misal `mila1.jpg` … `mila6.jpg`).
 2. Ubah `photo`, `gallery`, dan `slides` di `src/config.js` agar menunjuk ke file tersebut.
-3. File SVG contoh (`foto1.svg` … `foto6.svg`) bisa dihapus setelahnya.
+3. Galeri tampil portrait (3:4), slideshow menampilkan foto utuh dengan latar blur.
 
 ## ☁️ Deploy ke Vercel
 
