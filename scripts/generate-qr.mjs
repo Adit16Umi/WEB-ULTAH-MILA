@@ -3,6 +3,7 @@ import sharp from 'sharp'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import config from '../src/config.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = resolve(here, '..')
@@ -11,6 +12,23 @@ const BASE =
   process.env.QR_BASE_URL ||
   process.argv[2] ||
   'https://web-ultah-mila.vercel.app'
+
+function resolveDate() {
+  let d = Number(config.birthDay)
+  let m = Number(config.birthMonth)
+  let y = Number(config.birthYear)
+  if (process.env.QR_DATE) {
+    const parts = String(process.env.QR_DATE).split(/[-/.]/).map(Number)
+    if (parts[0] && parts[1]) {
+      d = parts[0]
+      m = parts[1]
+      if (parts[2]) y = parts[2]
+    }
+  }
+  return { d, m, y }
+}
+
+const { d, m, y } = resolveDate()
 
 const TARGETS = [
   {
@@ -27,7 +45,7 @@ const TARGETS = [
   },
   {
     label: 'ultah-mila-tunggu',
-    url: `${BASE}/#waiting`,
+    url: `${BASE}/?d=${d}&m=${m}&y=${y}#waiting`,
     palette: {
       bgTop: '#efe6ff',
       bgBottom: '#d6c2ff',

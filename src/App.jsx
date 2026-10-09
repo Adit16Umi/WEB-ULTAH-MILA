@@ -30,6 +30,18 @@ function readForcedView() {
   return null
 }
 
+function readUrlDate() {
+  const params = new URLSearchParams(window.location.search)
+  const d = Number(params.get('d'))
+  const m = Number(params.get('m'))
+  let y = Number(params.get('y'))
+  if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+    if (!(y >= 1900 && y <= 2100)) y = config.birthYear
+    return { day: d, month: m, year: y }
+  }
+  return null
+}
+
 function isOwnerStored() {
   return window.localStorage.getItem(OWNER_KEY) === 'true'
 }
@@ -63,8 +75,10 @@ const simplePageVariants = {
 
 export default function App() {
   const { birthDate, update, reset } = useBirthDate()
-  const { isToday } = useCountdown(birthDate.month, birthDate.day)
-  const age = getAge(birthDate) || config.age
+  const [urlDate, setUrlDate] = useState(readUrlDate)
+  const effectiveBirthDate = urlDate || birthDate
+  const { isToday } = useCountdown(effectiveBirthDate.month, effectiveBirthDate.day)
+  const age = getAge(effectiveBirthDate) || config.age
   const lowPower = useLowPower()
   const variants = lowPower ? simplePageVariants : pageVariants
 
@@ -101,6 +115,7 @@ export default function App() {
       const isTodayNow =
         Number(next.month) === now.getMonth() + 1 && Number(next.day) === now.getDate()
       window.localStorage.removeItem(UNLOCK_KEY)
+      setUrlDate(null)
       setForcedView(null)
       setPhase(isTodayNow ? 'celebration' : 'waiting')
       window.scrollTo({ top: 0 })
@@ -189,7 +204,7 @@ export default function App() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             <WaitingRoom
-              birthDate={birthDate}
+              birthDate={effectiveBirthDate}
               age={age}
               isOwner={isOwner}
               onOpenSettings={() => setSettingsOpen(true)}

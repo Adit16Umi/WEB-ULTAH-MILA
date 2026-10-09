@@ -8,6 +8,7 @@ const MONTHS = [
 
 export default function SettingsPanel({ open, onClose, birthDate, isOwner, onSave, onReset, onPreview, onLock, onExitOwner }) {
   const [form, setForm] = useState(birthDate)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (open) setForm(birthDate)
@@ -18,6 +19,18 @@ export default function SettingsPanel({ open, onClose, birthDate, isOwner, onSav
   const save = () => {
     onSave(form)
     onClose()
+  }
+
+  const waitingLink = `${window.location.origin}${window.location.pathname}?d=${form.day}&m=${form.month}&y=${form.year}#waiting`
+
+  const copyWaitingLink = async () => {
+    try {
+      await navigator.clipboard.writeText(waitingLink)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    } catch {
+      // fallback kalau clipboard tidak tersedia
+    }
   }
 
   return (
@@ -102,6 +115,20 @@ export default function SettingsPanel({ open, onClose, birthDate, isOwner, onSav
                 </button>
               )}
             </div>
+
+            {isOwner && (
+              <div className="qrsnippet">
+                <p className="qrsnippet-hint">
+                  Link QR tunggu mengikuti tanggal ini (untuk barcode di atas).
+                </p>
+                <div className="qrsnippet-row">
+                  <input readOnly value={waitingLink} onFocus={(e) => e.target.select()} aria-label="Link QR tunggu" />
+                  <button className="btn ghost" onClick={copyWaitingLink}>
+                    {copied ? '✓ Tersalin' : '📋 Salin'}
+                  </button>
+                </div>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

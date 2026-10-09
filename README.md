@@ -116,21 +116,36 @@ hasilnya **QR yang menyatu dalam bentuk love** (modul bulat + logo hati, tetap
 bisa dipindai), lalu bagikan/cetak sendiri. Script menghasilkan **dua QR**:
 
 - `ultah-mila-perayaan` → langsung halaman **perayaan** (`#celebration`, pink)
-- `ultah-mila-tunggu` → langsung halaman **tunggu** (`#waiting`, ungu)
+- `ultah-mila-tunggu` → langsung halaman **tunggu** (`#waiting`, ungu). Tanggal
+  hitungannya mengikuti `birthDay/Month/Year` di `src/config.js`
 
 ```bash
-# pakai URL default
+# pakai URL default + tanggal dari config.js
 npm run qr
 
-# atau tentukan base URL sendiri (setelah deploy ke Vercel)
+# tentukan base URL sendiri
 npm run qr -- "https://web-ultah-mila.vercel.app"
 
-# bisa juga lewat env
-QR_BASE_URL="https://web-ultah-mila.vercel.app" npm run qr
+# tentukan tanggal khusus untuk QR tunggu (bukan dari config)
+QR_DATE="5-12-2005" npm run qr
 ```
 
 Hasil (PNG + SVG) tersimpan di folder **`qr/`** (di luar `public/`, jadi tidak
 ikut ter-deploy). Warna & bentuk bisa diatur di `scripts/generate-qr.mjs`.
+
+### Tanggal QR tunggu = waktu yang kamu set di panel
+
+Kalau kamu set tanggal lahir di panel pengaturan (mode owner), buka
+**Salin link QR tunggu** di bagian bawah panel — link itu sudah berisi tanggal
+yang baru kamu set. Pakai link itu untuk membuat barcode:
+
+```bash
+QR_BASE_URL="https://web-ultah-mila.vercel.app" QR_DATE="9-10-2005" npm run qr
+```
+
+Cukup ganti `9-10-2005` dengan tanggal hasil salinan di panel. Orang yang
+memindai QR tunggu akan melihat countdown mengarah ke tanggal itu (link QR
+dianggap punya "waktu sendiri", tidak terpengaruh setelan device lain).
 
 ---
 
