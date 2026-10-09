@@ -13,12 +13,26 @@ import ScrollProgress from './components/ScrollProgress'
 import WaitingRoom from './components/WaitingRoom'
 import BirthdayCake from './components/BirthdayCake'
 import SettingsPanel from './components/SettingsPanel'
+import OpeningIntro from './components/OpeningIntro'
 import { useBirthDate, getAge } from './hooks/useBirthDate'
 import { useCountdown } from './hooks/useCountdown'
 import { useLowPower } from './hooks/useLowPower'
 import config from './config'
 
 const UNLOCK_KEY = 'birthday-unlocked'
+const OWNER_KEY = 'birthday-owner'
+const INTRO_KEY = 'birthday-intro-seen'
+
+function readForcedView() {
+  const hash = window.location.hash
+  if (hash === '#celebration') return 'celebration'
+  if (hash === '#waiting') return 'waiting'
+  return null
+}
+
+function isOwnerStored() {
+  return window.localStorage.getItem(OWNER_KEY) === 'true'
+}
 
 function fireConfetti() {
   const duration = 3200
@@ -54,22 +68,28 @@ export default function App() {
   const lowPower = useLowPower()
   const variants = lowPower ? simplePageVariants : pageVariants
 
+  const [forcedView, setForcedView] = useState(readForcedView)
+  const [isOwner, setIsOwner] = useState(isOwnerStored)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [surpriseOpen, setSurpriseOpen] = useState(false)
+  const [introOpen, setIntroOpen] = useState(false)
   const [phase, setPhase] = useState(() => {
+    const forced = readForcedView()
+    if (forced) return forced
     const unlocked = window.localStorage.getItem(UNLOCK_KEY) === 'true'
-    const preview = window.location.hash === '#celebration'
-    return unlocked || preview || isToday ? 'celebration' : 'waiting'
+    return unlocked || isToday ? 'celebration' : 'waiting'
   })
-  const prevPhase = useRef(phase)
+  const prevPhase = useRef(null)
 
   const unlock = useCallback(() => {
     window.localStorage.setItem(UNLOCK_KEY, 'true')
+    setForcedView('celebration')
     setPhase('celebration')
   }, [])
 
   const lock = useCallback(() => {
     window.localStorage.removeItem(UNLOCK_KEY)
+    setForcedView('waiting')
     setPhase('waiting')
     window.scrollTo({ top: 0 })
   }, [])
@@ -81,32 +101,70 @@ export default function App() {
       const isTodayNow =
         Number(next.month) === now.getMonth() + 1 && Number(next.day) === now.getDate()
       window.localStorage.removeItem(UNLOCK_KEY)
+      setForcedView(null)
       setPhase(isTodayNow ? 'celebration' : 'waiting')
       window.scrollTo({ top: 0 })
     },
     [update],
   )
 
-  useEffect(() => {
-    if (phase === 'waiting' && isToday) unlock()
-  }, [phase, isToday, unlock])
+  const exitOwner = useCallback(() => {
+    window.localStorage.removeItem(OWNER_KEY)
+    setIsOwner(false)
+    setSettingsOpen(false)
+  }, [])
+
+  const finishIntro = useCallback(() => {
+    window.sessionStorage.setItem(INTRO_KEY, 'true')
+    setIntroOpen(false)
+    setSurpriseOpen(true)
+  }, [])
 
   useEffect(() => {
-    if (prevPhase.current !== 'celebration' && phase === 'celebration') {
+    if (forcedView === 'waiting') return
+    if (phase === 'waiting' && isToday) unlock()
+  }, [phase, isToday, forcedView, unlock])
+
+  useEffect(() => {
+    if (phase !== 'celebration') {
+      prevPhase.current = phase
+      return
+    }
+    const cameFromOther = prevPhase.current !== 'celebration'
+    prevPhase.current = phase
+    if (!cameFromOther) return
+    const seen = window.sessionStorage.getItem(INTRO_KEY) === 'true'
+    if (!seen) {
+      setIntroOpen(true)
+    } else {
       fireConfetti()
       setSurpriseOpen(true)
     }
-    prevPhase.current = phase
   }, [phase])
 
   useEffect(() => {
     const onHash = () => {
-      if (window.location.hash === '#pengaturan') setSettingsOpen(true)
-      if (window.location.hash === '#celebration') unlock()
+      const hash = window.location.hash
+      if (hash === '#owner') {
+        window.localStorage.setItem(OWNER_KEY, 'true')
+        setIsOwner(true)
+        setSettingsOpen(true)
+      } else if (hash === '#pengaturan') {
+        if (isOwnerStored()) setSettingsOpen(true)
+      } else if (hash === '#celebration') {
+        setForcedView('celebration')
+        setPhase('celebration')
+      } else if (hash === '#waiting') {
+        window.localStorage.removeItem(UNLOCK_KEY)
+        setForcedView('waiting')
+        setPhase('waiting')
+        window.scrollTo({ top: 0 })
+      }
     }
     window.addEventListener('hashchange', onHash)
+    onHash()
     return () => window.removeEventListener('hashchange', onHash)
-  }, [unlock])
+  }, [])
 
   const celebrate = useCallback(() => fireConfetti(), [])
 
@@ -130,7 +188,12 @@ export default function App() {
             exit="exit"
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <WaitingRoom birthDate={birthDate} age={age} onOpenSettings={() => setSettingsOpen(true)} />
+            <WaitingRoom
+              birthDate={birthDate}
+              age={age}
+              isOwner={isOwner}
+              onOpenSettings={() => setSettingsOpen(true)}
+            />
           </motion.div>
         ) : (
           <motion.div
@@ -150,26 +213,31 @@ export default function App() {
               <Gallery />
             </main>
             <Footer />
-            <button
-              className="settings-gear"
-              onClick={() => setSettingsOpen(true)}
-              aria-label="Pengaturan tanggal"
-              title="Pengaturan tanggal lahir"
-            >
-              ⚙
-            </button>
+            {isOwner && (
+              <button
+                className="settings-gear"
+                onClick={() => setSettingsOpen(true)}
+                aria-label="Pengaturan tanggal"
+                title="Pengaturan tanggal lahir"
+              >
+                ⚙
+              </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
       <MusicToggle />
+      <OpeningIntro open={introOpen} onFinish={finishIntro} lowPower={lowPower} />
       <SurpriseOverlay open={surpriseOpen} onClose={() => setSurpriseOpen(false)} />
       <SettingsPanel
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         birthDate={birthDate}
+        isOwner={isOwner}
         onSave={applySettings}
         onReset={reset}
+        onExitOwner={exitOwner}
         onPreview={() => {
           setSettingsOpen(false)
           unlock()

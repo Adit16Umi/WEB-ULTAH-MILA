@@ -48,7 +48,7 @@ const DECOR = [
   { name: 'cupcake', cls: 'd6' },
 ]
 
-export default function WaitingRoom({ birthDate, age = config.age, onOpenSettings }) {
+export default function WaitingRoom({ birthDate, age = config.age, isOwner = false, onOpenSettings }) {
   const { days, hours, minutes, seconds } = useCountdown(birthDate.month, birthDate.day)
 
   const now = Date.now()
@@ -100,9 +100,11 @@ export default function WaitingRoom({ birthDate, age = config.age, onOpenSetting
         </div>
       </motion.div>
 
-      <button className="settings-gear" onClick={onOpenSettings} aria-label="Pengaturan" title="Pengaturan">
-        ⚙
-      </button>
+      {isOwner && (
+        <button className="settings-gear" onClick={onOpenSettings} aria-label="Pengaturan" title="Pengaturan">
+          ⚙
+        </button>
+      )}
     </section>
   )
 }

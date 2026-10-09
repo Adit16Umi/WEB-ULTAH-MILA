@@ -6,7 +6,7 @@ const MONTHS = [
   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
 ]
 
-export default function SettingsPanel({ open, onClose, birthDate, onSave, onReset, onPreview, onLock }) {
+export default function SettingsPanel({ open, onClose, birthDate, isOwner, onSave, onReset, onPreview, onLock, onExitOwner }) {
   const [form, setForm] = useState(birthDate)
 
   useEffect(() => {
@@ -40,7 +40,9 @@ export default function SettingsPanel({ open, onClose, birthDate, onSave, onRese
           >
             <h3>Pengaturan Tanggal Lahir</h3>
             <p className="settings-hint">
-              Hanya untuk pembuat. Countdown & waktu kejutan mengikuti tanggal ini.
+              {isOwner
+                ? 'Mode owner aktif — hanya kamu yang bisa mengubah ini. Countdown & waktu kejutan mengikuti tanggal ini (khusus device ini).'
+                : 'Hanya untuk pembuat. Countdown & waktu kejutan mengikuti tanggal ini.'}
             </p>
 
             <div className="settings-fields">
@@ -94,6 +96,11 @@ export default function SettingsPanel({ open, onClose, birthDate, onSave, onRese
               <button className="link-btn" onClick={onLock}>
                 Kunci lagi (kembali menunggu)
               </button>
+              {isOwner && (
+                <button className="link-btn" onClick={onExitOwner}>
+                  Keluar mode owner
+                </button>
+              )}
             </div>
           </motion.div>
         </motion.div>

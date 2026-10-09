@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import confetti from 'canvas-confetti'
 import config from '../config'
 
 const sprinkles = {
@@ -42,14 +43,27 @@ const sparks = [
   { left: '48%', top: '2%', size: 11, color: '#ffffff', delay: '1.1s' },
 ]
 
+function giftBurst() {
+  confetti({ particleCount: 110, spread: 85, origin: { y: 0.6 } })
+  confetti({ particleCount: 50, angle: 60, spread: 70, origin: { x: 0, y: 0.65 } })
+  confetti({ particleCount: 50, angle: 120, spread: 70, origin: { x: 1, y: 0.65 } })
+}
+
 export default function BirthdayCake({ onCelebrate, age = config.age }) {
   const [blown, setBlown] = useState(false)
+  const [giftOpen, setGiftOpen] = useState(false)
   const candleCount = Math.max(1, Math.min(age, 9))
 
   const blow = () => {
     if (blown) return
     setBlown(true)
     onCelebrate?.()
+  }
+
+  const openGift = () => {
+    if (giftOpen) return
+    setGiftOpen(true)
+    giftBurst()
   }
 
   return (
@@ -63,7 +77,7 @@ export default function BirthdayCake({ onCelebrate, age = config.age }) {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
           <h2>Kue Ulang Tahun</h2>
-          <p>Tiup lilinnya dan buat sebuah permohonan 💫</p>
+          <p>Buka kadonya, tiup lilinnya, dan buat sebuah permohonan 💫</p>
         </motion.div>
 
         <motion.div
@@ -73,79 +87,144 @@ export default function BirthdayCake({ onCelebrate, age = config.age }) {
           viewport={{ once: true, amount: 0.35 }}
           transition={{ type: 'spring', stiffness: 90, damping: 16 }}
         >
-          <div className={`cake ${blown ? 'is-blown' : ''}`}>
-            <div className="cake-glow" aria-hidden="true" />
-            <span className="cake-halo" aria-hidden="true" />
+          <div className="cake-wrap">
+            <motion.div
+              className={`cake ${blown ? 'is-blown' : ''}`}
+              initial={false}
+              animate={
+                giftOpen
+                  ? { opacity: 1, y: 0, scale: 1 }
+                  : { opacity: 0, y: 70, scale: 0.45 }
+              }
+              transition={{
+                type: 'spring',
+                stiffness: 90,
+                damping: 14,
+                delay: giftOpen ? 0.3 : 0,
+              }}
+            >
+              <div className="cake-glow" aria-hidden="true" />
+              <span className="cake-halo" aria-hidden="true" />
 
-            <div className="candles">
-              {Array.from({ length: candleCount }).map((_, i) => (
-                <div className="candle" key={i}>
-                  <span className="candle-glow" style={{ animationDelay: `${(i % 3) * 0.22}s` }} />
-                  <span className="flame" style={{ animationDelay: `${(i % 3) * 0.22}s` }} />
-                  {blown && <span className="smoke" style={{ animationDelay: `${(i % 3) * 0.18}s` }} />}
-                </div>
+              <div className="candles">
+                {Array.from({ length: candleCount }).map((_, i) => (
+                  <div className="candle" key={i}>
+                    <span className="candle-glow" style={{ animationDelay: `${(i % 3) * 0.22}s` }} />
+                    <span className="flame" style={{ animationDelay: `${(i % 3) * 0.22}s` }} />
+                    {blown && <span className="smoke" style={{ animationDelay: `${(i % 3) * 0.18}s` }} />}
+                  </div>
+                ))}
+              </div>
+
+              <div className="cherries" aria-hidden="true">
+                <span className="berry" />
+                <span className="berry" />
+                <span className="berry" />
+              </div>
+
+              <div className="tier tier1">
+                <span className="frosting" />
+                <Sprinkles items={sprinkles.tier1} />
+              </div>
+              <div className="tier tier2">
+                <span className="frosting" />
+                <Sprinkles items={sprinkles.tier2} />
+              </div>
+              <div className="tier tier3">
+                <span className="frosting" />
+                <Sprinkles items={sprinkles.tier3} />
+              </div>
+
+              <div className="cake-plate" />
+
+              {sparks.map((s, i) => (
+                <span
+                  key={i}
+                  className="spark"
+                  aria-hidden="true"
+                  style={{
+                    left: s.left,
+                    top: s.top,
+                    color: s.color,
+                    fontSize: s.size,
+                    animationDelay: s.delay,
+                  }}
+                >
+                  ✦
+                </span>
               ))}
-            </div>
+            </motion.div>
 
-            <div className="cherries" aria-hidden="true">
-              <span className="berry" />
-              <span className="berry" />
-              <span className="berry" />
-            </div>
-
-            <div className="tier tier1">
-              <span className="frosting" />
-              <Sprinkles items={sprinkles.tier1} />
-            </div>
-            <div className="tier tier2">
-              <span className="frosting" />
-              <Sprinkles items={sprinkles.tier2} />
-            </div>
-            <div className="tier tier3">
-              <span className="frosting" />
-              <Sprinkles items={sprinkles.tier3} />
-            </div>
-
-            <div className="cake-plate" />
-
-            {sparks.map((s, i) => (
-              <span
-                key={i}
-                className="spark"
-                aria-hidden="true"
-                style={{
-                  left: s.left,
-                  top: s.top,
-                  color: s.color,
-                  fontSize: s.size,
-                  animationDelay: s.delay,
-                }}
-              >
-                ✦
-              </span>
-            ))}
+            <AnimatePresence>
+              {!giftOpen && (
+                <motion.div
+                  className="gift"
+                  onClick={openGift}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Buka kado"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') openGift()
+                  }}
+                  initial={false}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, delay: 0.45 }}
+                >
+                  <motion.div
+                    className="gift-box"
+                    exit={{ y: 90, scaleY: 0.45, opacity: 0 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+                  >
+                    <span className="gift-ribbon v" />
+                    <span className="gift-ribbon h" />
+                  </motion.div>
+                  <motion.div
+                    className="gift-lid"
+                    exit={{ y: -260, rotate: -20, opacity: 0 }}
+                    transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <span className="gift-ribbon lv" />
+                    <span className="gift-bow">🎀</span>
+                  </motion.div>
+                  <span className="gift-hint">Klik kado untuk buka 🎁</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
 
         <div className="cake-actions">
-          <motion.button
-            className="btn"
-            onClick={blow}
-            disabled={blown}
-            whileHover={blown ? {} : { scale: 1.06, y: -3 }}
-            whileTap={blown ? {} : { scale: 0.95 }}
-          >
-            🎂 Tiup Lilin
-          </motion.button>
-          <motion.button
-            className="btn ghost"
-            onClick={() => setBlown(false)}
-            disabled={!blown}
-            whileHover={!blown ? {} : { scale: 1.06, y: -3 }}
-            whileTap={!blown ? {} : { scale: 0.95 }}
-          >
-            ✨ Nyalakan Lagi
-          </motion.button>
+          {!giftOpen ? (
+            <motion.button
+              className="btn"
+              onClick={openGift}
+              whileHover={{ scale: 1.06, y: -3 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              🎁 Buka Kado
+            </motion.button>
+          ) : (
+            <>
+              <motion.button
+                className="btn"
+                onClick={blow}
+                disabled={blown}
+                whileHover={blown ? {} : { scale: 1.06, y: -3 }}
+                whileTap={blown ? {} : { scale: 0.95 }}
+              >
+                🎂 Tiup Lilin
+              </motion.button>
+              <motion.button
+                className="btn ghost"
+                onClick={() => setBlown(false)}
+                disabled={!blown}
+                whileHover={!blown ? {} : { scale: 1.06, y: -3 }}
+                whileTap={!blown ? {} : { scale: 0.95 }}
+              >
+                ✨ Nyalakan Lagi
+              </motion.button>
+            </>
+          )}
         </div>
       </div>
     </section>

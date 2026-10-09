@@ -31,13 +31,38 @@ Buka alamat yang muncul (biasanya http://localhost:5173).
 
 ## ⚙️ Halaman Pengaturan (khusus pembuat)
 
-Klik ikon **gear** di kiri-bawah (ada di halaman menunggu **dan** halaman perayaan, atau buka `#pengaturan`) untuk:
+Klik ikon **gear** di kiri-bawah (hanya muncul di **mode owner**, atau buka `#owner`) untuk:
 
 - Mengubah **tanggal lahir** (tersimpan di localStorage browser),
 - **Buka Sekarang** untuk pratinjau perayaan,
-- **Kunci lagi** untuk kembali ke hitungan menunggu.
+- **Kunci lagi** untuk kembali ke hitungan menunggu,
+- **Keluar mode owner** untuk menyembunyikan gear lagi.
 
-Pintasan: tambahkan `#celebration` di URL untuk membuka halaman perayaan.
+### 🔐 Mode owner (pengaturan hanya untuk kamu)
+
+Tombol pengaturan **disembunyikan** dari pengunjung. Untuk membukanya, tambahkan
+`#owner` di URL (sekali saja — akan tersimpan di browser itu):
+
+```
+https://web-ultah-mila.vercel.app/#owner
+```
+
+Setelah itu gear ⚙ muncul dan panel bisa dibuka juga lewat `#pengaturan`.
+Klik **Keluar mode owner** untuk menonaktifkan lagi.
+
+> Catatan: tanggal disimpan **per-device** (localStorage). Tanggal yang dilihat
+> semua pengunjung berasal dari `src/config.js`. Panel owner hanya mengubah di
+> device kamu untuk pratinjau.
+
+### 🔗 Pintasan URL
+
+| URL           | Tampil                                              |
+| ------------- | --------------------------------------------------- |
+| `/`           | Halaman tunggu (otomatis ke perayaan saat hari-H)   |
+| `#celebration`| Langsung halaman **perayaan**                       |
+| `#waiting`    | Langsung halaman **tunggu** (walau hari-H)          |
+| `#owner`      | Aktifkan mode owner + buka pengaturan               |
+| `#pengaturan` | Buka pengaturan (kalau mode owner aktif)            |
 
 ## ✏️ Cara kustomisasi
 
@@ -87,21 +112,25 @@ vercel --prod
 ## 🔗 Barcode / QR code (di luar web)
 
 QR/barcode **tidak ditampilkan** di website. Buat filenya lewat script Node —
-hasilnya **QR warna pink yang menyatu dalam bentuk love** (tanpa kotak di
-dalamnya, modul bulat pink + logo hati, tetap bisa dipindai), lalu
-bagikan/cetak sendiri:
+hasilnya **QR yang menyatu dalam bentuk love** (modul bulat + logo hati, tetap
+bisa dipindai), lalu bagikan/cetak sendiri. Script menghasilkan **dua QR**:
+
+- `ultah-mila-perayaan` → langsung halaman **perayaan** (`#celebration`, pink)
+- `ultah-mila-tunggu` → langsung halaman **tunggu** (`#waiting`, ungu)
 
 ```bash
 # pakai URL default
 npm run qr
 
-# atau tentukan URL sendiri (setelah deploy ke Vercel)
-npm run qr -- "https://web-ultah-mila.vercel.app/#celebration"
+# atau tentukan base URL sendiri (setelah deploy ke Vercel)
+npm run qr -- "https://web-ultah-mila.vercel.app"
+
+# bisa juga lewat env
+QR_BASE_URL="https://web-ultah-mila.vercel.app" npm run qr
 ```
 
 Hasil (PNG + SVG) tersimpan di folder **`qr/`** (di luar `public/`, jadi tidak
-ikut ter-deploy). Arahkan QR ke `#celebration` agar langsung membuka halaman
-perayaan. Warna & bentuk bisa diatur di `scripts/generate-qr.mjs`.
+ikut ter-deploy). Warna & bentuk bisa diatur di `scripts/generate-qr.mjs`.
 
 ---
 
