@@ -88,7 +88,7 @@ bagikan/cetak sendiri:
 npm run qr
 
 # atau tentukan URL sendiri (setelah deploy ke Vercel)
-npm run qr -- "https://domain-kamu.vercel.app/#celebration"
+npm run qr -- "https://web-ultah-mila.vercel.app/#celebration"
 ```
 
 Hasil (PNG + SVG) tersimpan di folder **`qr/`** (di luar `public/`, jadi tidak

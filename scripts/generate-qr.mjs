@@ -10,7 +10,7 @@ const root = resolve(here, '..')
 const url =
   process.argv.slice(2).join(' ') ||
   process.env.SITE_URL ||
-  'https://ultah-mila.vercel.app/#celebration'
+  'https://web-ultah-mila.vercel.app/#celebration'
 
 const outDir = resolve(root, 'qr')
 const base = 'ultah-mila'
