@@ -23,4 +23,17 @@ export function useBirthDate() {
   return { birthDate, update, reset }
 }
 
+export function getTurningAge(birthDate, from = new Date()) {
+  const { day, month, year } = birthDate || {}
+  const birthYear = Number(year)
+  if (!birthYear) return 0
+
+  const today = new Date(from.getFullYear(), from.getMonth(), from.getDate())
+  let target = new Date(from.getFullYear(), Number(month) - 1, Number(day))
+  if (target < today) {
+    target = new Date(from.getFullYear() + 1, Number(month) - 1, Number(day))
+  }
+  return Math.max(0, target.getFullYear() - birthYear)
+}
+
 export default useBirthDate

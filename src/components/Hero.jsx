@@ -18,7 +18,7 @@ const item = {
   },
 }
 
-export default function Hero({ onCelebrate }) {
+export default function Hero({ onCelebrate, age = config.age }) {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -106,7 +106,7 @@ export default function Hero({ onCelebrate }) {
             <img src={config.photo} alt={`Foto ${config.name}`} />
           </div>
           <div className="photo-badge">
-            ke-{config.age} <Emoji3D name="party" size={22} />
+            ke-{age} <Emoji3D name="party" size={22} />
           </div>
         </motion.div>
       </div>

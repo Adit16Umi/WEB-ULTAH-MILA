@@ -13,8 +13,9 @@ import ScrollProgress from './components/ScrollProgress'
 import WaitingRoom from './components/WaitingRoom'
 import BirthdayCake from './components/BirthdayCake'
 import SettingsPanel from './components/SettingsPanel'
-import { useBirthDate } from './hooks/useBirthDate'
+import { useBirthDate, getTurningAge } from './hooks/useBirthDate'
 import { useCountdown } from './hooks/useCountdown'
+import config from './config'
 
 const UNLOCK_KEY = 'birthday-unlocked'
 
@@ -42,6 +43,7 @@ const pageVariants = {
 export default function App() {
   const { birthDate, update, reset } = useBirthDate()
   const { isToday } = useCountdown(birthDate.month, birthDate.day)
+  const age = getTurningAge(birthDate) || config.age
 
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [surpriseOpen, setSurpriseOpen] = useState(false)
@@ -104,7 +106,7 @@ export default function App() {
             exit="exit"
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <WaitingRoom birthDate={birthDate} onOpenSettings={() => setSettingsOpen(true)} />
+            <WaitingRoom birthDate={birthDate} age={age} onOpenSettings={() => setSettingsOpen(true)} />
           </motion.div>
         ) : (
           <motion.div
@@ -118,9 +120,9 @@ export default function App() {
             <ScrollProgress />
             <Nav />
             <main>
-              <Hero onCelebrate={celebrate} />
+              <Hero onCelebrate={celebrate} age={age} />
               <Slideshow />
-              <BirthdayCake onCelebrate={celebrate} />
+              <BirthdayCake onCelebrate={celebrate} age={age} />
               <Gallery />
             </main>
             <Footer />

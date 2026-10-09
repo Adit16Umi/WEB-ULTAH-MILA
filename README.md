@@ -45,13 +45,21 @@ Data pribadi ada di satu file: **`src/config.js`**
 
 | Yang diubah        | Keterangan                                            |
 | ------------------ | ----------------------------------------------------- |
-| `name` / `age`     | Nama & umur yang berulang tahun                       |
-| `birthDay/Month/Year` | Tanggal lahir default untuk countdown              |
+| `name`             | Nama yang berulang tahun                              |
+| `age`              | Umur cadangan (umur asli dihitung otomatis dari tahun lahir) |
+| `birthDay/Month/Year` | Tanggal & tahun lahir (umur + countdown mengikuti ini) |
 | `photo`            | Path foto utama di hero (contoh `/images/galeri/foto1.jpg`) |
 | `gallery`          | Daftar foto + `caption` + `message` (kata-kata saat foto dibuka) |
 | `slides`           | Daftar slide untuk slideshow (foto + judul + subjudul)|
 | `secretTitle/secretMessage` | Isi pop-up kejutan saat perayaan dibuka      |
-| `musicUrl`         | Isi link mp3 untuk tombol musik (contoh `/music.mp3`) |
+| `musicUrl`         | Path lagu, contoh `/music/shape-of-my-heart.mp3` (taruh file di `public/music/`) |
+
+### Menambahkan lagu
+
+1. Taruh file mp3-mu di **`public/music/`** (mis. `shape-of-my-heart.mp3`).
+2. Pastikan `musicUrl` di `src/config.js` menunjuk ke file itu.
+3. Tombol musik muncul di kanan-bawah; lagu dicoba autoplay, kalau diblokir browser
+   klik tombolnya (atau sentuh halaman) untuk memutar.
 
 ### Mengganti foto
 

@@ -48,7 +48,7 @@ const DECOR = [
   { name: 'cupcake', cls: 'd6' },
 ]
 
-export default function WaitingRoom({ birthDate, onOpenSettings }) {
+export default function WaitingRoom({ birthDate, age = config.age, onOpenSettings }) {
   const { days, hours, minutes, seconds } = useCountdown(birthDate.month, birthDate.day)
 
   const now = Date.now()
@@ -95,7 +95,7 @@ export default function WaitingRoom({ birthDate, onOpenSettings }) {
             />
           </div>
           <span className="progress-label">
-            {config.name} akan berusia ke-{config.age} 🎂
+            {config.name} akan berusia ke-{age} 🎂
           </span>
         </div>
       </motion.div>

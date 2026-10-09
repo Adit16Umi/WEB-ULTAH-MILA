@@ -7,9 +7,32 @@ export default function MusicToggle() {
   const audioRef = useRef(null)
 
   useEffect(() => {
-    if (config.musicUrl) {
-      audioRef.current = new Audio(config.musicUrl)
-      audioRef.current.loop = true
+    if (!config.musicUrl) return
+    const audio = new Audio(config.musicUrl)
+    audio.loop = true
+    audio.volume = 0.75
+    audioRef.current = audio
+
+    const tryPlay = () =>
+      audio
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => setPlaying(false))
+
+    tryPlay()
+
+    const onFirstGesture = () => {
+      tryPlay()
+      window.removeEventListener('pointerdown', onFirstGesture)
+      window.removeEventListener('keydown', onFirstGesture)
+    }
+    window.addEventListener('pointerdown', onFirstGesture)
+    window.addEventListener('keydown', onFirstGesture)
+
+    return () => {
+      window.removeEventListener('pointerdown', onFirstGesture)
+      window.removeEventListener('keydown', onFirstGesture)
+      audio.pause()
     }
   }, [])
 
@@ -20,14 +43,19 @@ export default function MusicToggle() {
     if (!audio) return
     if (playing) {
       audio.pause()
+      setPlaying(false)
     } else {
-      audio.play().catch(() => {})
+      audio.play().then(() => setPlaying(true)).catch(() => {})
     }
-    setPlaying(!playing)
   }
 
   return (
-    <button className="music-btn" onClick={toggle} aria-label="Putar musik">
+    <button
+      className={`music-btn ${playing ? 'is-playing' : ''}`}
+      onClick={toggle}
+      aria-label={playing ? 'Jeda musik' : 'Putar musik'}
+      title={playing ? 'Jeda musik' : 'Putar musik'}
+    >
       <Emoji3D name={playing ? 'speakerHigh' : 'speakerMuted'} size={26} className="music-emoji" />
     </button>
   )

@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import config from '../config'
 
-export default function BirthdayCake({ onCelebrate }) {
+export default function BirthdayCake({ onCelebrate, age = config.age }) {
   const [blown, setBlown] = useState(false)
-  const candleCount = Math.max(1, Math.min(config.age, 9))
+  const candleCount = Math.max(1, Math.min(age, 9))
 
   const blow = () => {
     if (blown) return

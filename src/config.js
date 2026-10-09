@@ -6,7 +6,7 @@ export const config = {
   birthYear: 2005,
 
   photo: '/images/galeri/foto1.svg',
-  musicUrl: '',
+  musicUrl: '/music/shape-of-my-heart.mp3',
 
   greeting: 'Hari ini dunia berbahagia, karena seseorang yang istimewa sedang bertambah usia.',
   subGreeting: 'Semoga tahun ini penuh cinta, tawa, dan mimpi yang jadi nyata.',
