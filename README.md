@@ -1,18 +1,24 @@
 # 🎂 Web Ulang Tahun Mila
 
-Website ulang tahun interaktif dengan animasi, foto, bunga, dan QR code kejutan.
-Dibuat dengan **React + Vite**, siap di-hosting gratis di **Vercel**.
+Website ulang tahun interaktif dengan **dua halaman**:
+1. **Halaman Menunggu** — hitung mundur flip-card ke hari ulang tahun.
+2. **Halaman Perayaan** — otomatis terbuka saat hari H (atau via tombol di Pengaturan), berisi kue + lilin, slideshow, galeri foto, dan ucapan.
+
+Dibuat dengan **React + Vite** + **framer-motion**, siap di-hosting gratis di **Vercel**.
 
 ## ✨ Fitur
 
-- Animasi balon & bunga beterbangan, gradient bergerak, blob blur
-- Foto orang yang berulang tahun dengan frame berputar & badge umur
-- Hitung mundur (countdown) otomatis ke ulang tahun berikutnya
-- Galeri foto + bunga dengan efek hover
-- **QR code / barcode**: dipindai → membuka kejutan rahasia
-- Kartu doa & harapan dengan animasi muncul saat di-scroll
-- Efek confetti ("Tiup Lilin")
-- Tombol musik (opsional)
+- **Two-page flow**: countdown menunggu → perayaan, dengan transisi blur halus
+- Hitung mundur **flip card** + progress bar menuju hari bahagia
+- Halaman perayaan terbuka **otomatis** saat tanggal ulang tahun tiba
+- **Kue ulang tahun** interaktif: tiup lilin → confetti + asap
+- **Slideshow otomatis** dengan efek geser & Ken Burns
+- **Galeri & ucapan digabung**: klik foto → lightbox menampilkan kenangan + kata-kata untuknya
+- Pop-up **kejutan** otomatis + confetti saat perayaan dibuka
+- Emoji 3D/animasi (Microsoft Teams Animated Emojis)
+- Balon & bunga beterbangan, gradient bergerak, blob blur
+- Font menarik: Dancing Script, Fredoka, Quicksand
+- Tombol musik (opsional) & scroll progress bar
 
 ## 🚀 Menjalankan di komputer
 
@@ -23,27 +29,35 @@ npm run dev
 
 Buka alamat yang muncul (biasanya http://localhost:5173).
 
+## ⚙️ Halaman Pengaturan (khusus pembuat)
+
+Klik ikon **gear** di kiri-bawah (ada di halaman menunggu **dan** halaman perayaan, atau buka `#pengaturan`) untuk:
+
+- Mengubah **tanggal lahir** (tersimpan di localStorage browser),
+- **Buka Sekarang** untuk pratinjau perayaan,
+- **Kunci lagi** untuk kembali ke hitungan menunggu.
+
+Pintasan: tambahkan `#celebration` di URL untuk membuka halaman perayaan.
+
 ## ✏️ Cara kustomisasi
 
-Semua data pribadi ada di satu file: **`src/config.js`**
+Data pribadi ada di satu file: **`src/config.js`**
 
 | Yang diubah        | Keterangan                                            |
 | ------------------ | ----------------------------------------------------- |
-| `name`             | Nama yang berulang tahun                              |
-| `age`              | Umur                                                 |
-| `birthDay/Month/Year` | Tanggal lahir untuk countdown                      |
-| `photo`            | Path foto utama (contoh `/images/mila.jpg`)           |
-| `gallery`          | Daftar foto + caption galeri                          |
-| `wishes`           | Doa & harapan                                         |
-| `secretTitle/secretMessage` | Isi kejutan saat QR dipindai                 |
+| `name` / `age`     | Nama & umur yang berulang tahun                       |
+| `birthDay/Month/Year` | Tanggal lahir default untuk countdown              |
+| `photo`            | Path foto utama di hero (contoh `/images/galeri/foto1.jpg`) |
+| `gallery`          | Daftar foto + `caption` + `message` (kata-kata saat foto dibuka) |
+| `slides`           | Daftar slide untuk slideshow (foto + judul + subjudul)|
+| `secretTitle/secretMessage` | Isi pop-up kejutan saat perayaan dibuka      |
 | `musicUrl`         | Isi link mp3 untuk tombol musik (contoh `/music.mp3`) |
-| `socials`          | Link sosial media                                     |
 
 ### Mengganti foto
 
-1. Taruh fotomu di folder **`public/images/`** (misal `mila.jpg`, `bunga1.jpg`).
-2. Ubah `photo` dan `gallery` di `src/config.js` agar menunjuk ke file tersebut.
-3. Foto SVG contoh (`mila.svg`, `flowers.svg`) bisa kamu hapus setelahnya.
+1. Taruh fotomu di folder **`public/images/galeri/`** (misal `foto1.jpg` … `foto6.jpg`).
+2. Ubah `photo`, `gallery`, dan `slides` di `src/config.js` agar menunjuk ke file tersebut.
+3. File SVG contoh (`foto1.svg` … `foto6.svg`) bisa dihapus setelahnya.
 
 ## ☁️ Deploy ke Vercel
 
@@ -62,11 +76,23 @@ vercel
 vercel --prod
 ```
 
-## 🔎 Catatan soal QR code
+## 🔗 Barcode / QR code (di luar web)
 
-QR code berisi link website ini sendiri + `#surprise`. Saat dipindai, pengunjung
-langsung melihat pop-up kejutan beserta confetti. Jadi pastikan dibagikan setelah
-website sudah online di Vercel agar link-nya benar.
+QR/barcode **tidak ditampilkan** di website. Buat filenya lewat script Node —
+hasilnya **QR warna pink dengan bentuk love** (modul bulat + logo hati di tengah,
+tetap bisa dipindai), lalu bagikan/cetak sendiri:
+
+```bash
+# pakai URL default
+npm run qr
+
+# atau tentukan URL sendiri (setelah deploy ke Vercel)
+npm run qr -- "https://domain-kamu.vercel.app/#celebration"
+```
+
+Hasil (PNG + SVG) tersimpan di folder **`qr/`** (di luar `public/`, jadi tidak
+ikut ter-deploy). Arahkan QR ke `#celebration` agar langsung membuka halaman
+perayaan. Warna & bentuk bisa diatur di `scripts/generate-qr.mjs`.
 
 ---
 

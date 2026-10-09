@@ -1,17 +1,21 @@
 import { useMemo } from 'react'
+import Emoji3D from './Emoji3D'
 
-const EMOJIS = ['🎈', '🌸', '💖', '✨', '🌷', '🎀', '🍰', '💐', '🦋', '⭐', '🌹', '🎉']
+const NAMES = [
+  'balloon', 'cherryBlossom', 'tulip', 'butterfly', 'sparkle', 'sparkles',
+  'confetti', 'blossom', 'hibiscus', 'gift', 'ribbon', 'cupcake',
+]
 
-export default function FloatingBackground({ count = 20 }) {
+export default function FloatingBackground({ count = 16 }) {
   const items = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => ({
         id: i,
         left: Math.random() * 100,
         delay: Math.random() * 14,
-        duration: 13 + Math.random() * 13,
-        size: 18 + Math.random() * 26,
-        emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+        duration: 14 + Math.random() * 12,
+        size: 22 + Math.random() * 26,
+        name: NAMES[Math.floor(Math.random() * NAMES.length)],
       })),
     [count],
   )
@@ -24,12 +28,11 @@ export default function FloatingBackground({ count = 20 }) {
           className="float-item"
           style={{
             left: `${it.left}%`,
-            fontSize: `${it.size}px`,
             animationDelay: `${it.delay}s`,
             animationDuration: `${it.duration}s`,
           }}
         >
-          {it.emoji}
+          <Emoji3D name={it.name} size={it.size} />
         </span>
       ))}
     </div>

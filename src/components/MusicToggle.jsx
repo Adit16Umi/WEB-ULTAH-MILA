@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import config from '../config'
+import Emoji3D from './Emoji3D'
 
 export default function MusicToggle() {
   const [playing, setPlaying] = useState(false)
@@ -27,7 +28,7 @@ export default function MusicToggle() {
 
   return (
     <button className="music-btn" onClick={toggle} aria-label="Putar musik">
-      {playing ? '🔊' : '🔇'}
+      <Emoji3D name={playing ? 'speakerHigh' : 'speakerMuted'} size={26} className="music-emoji" />
     </button>
   )
 }

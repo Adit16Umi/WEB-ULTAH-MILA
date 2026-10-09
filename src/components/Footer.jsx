@@ -8,13 +8,6 @@ export default function Footer() {
         <p>
           Dibuat dengan <span className="heart">❤</span> untuk orang istimewa.
         </p>
-        <div className="socials">
-          {config.socials.map((s, i) => (
-            <a key={i} href={s.url} target="_blank" rel="noreferrer">
-              {s.label}
-            </a>
-          ))}
-        </div>
       </div>
     </footer>
   )

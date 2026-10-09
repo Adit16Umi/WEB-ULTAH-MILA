@@ -5,34 +5,57 @@ export const config = {
   birthMonth: 10,
   birthYear: 2005,
 
-  photo: '/images/mila.svg',
+  photo: '/images/galeri/foto1.svg',
   musicUrl: '',
 
   greeting: 'Hari ini dunia berbahagia, karena seseorang yang istimewa sedang bertambah usia.',
   subGreeting: 'Semoga tahun ini penuh cinta, tawa, dan mimpi yang jadi nyata.',
 
+  // Foto-foto dia + kata-kata/ucapan yang muncul saat foto dibuka (lightbox).
+  // Ganti dengan foto asli: taruh di public/images/galeri/
+  // lalu sesuaikan path di bawah (mis. /images/galeri/foto1.jpg).
   gallery: [
-    { src: '/images/mila.svg', caption: 'Senyum manis Mila 💖' },
-    { src: '/images/flowers.svg', caption: 'Bunga untuk Mila 🌸' },
-    { src: '/images/mila.svg', caption: 'Momen bahagia ✨' },
-    { src: '/images/flowers.svg', caption: 'Penuh warna seperti kamu 🎨' },
+    {
+      src: '/images/galeri/foto1.svg',
+      caption: 'Senyum manis yang selalu bikin cerah',
+      message: 'Semoga selalu cantik, sehat, dan jadi pribadi yang paling ceria.',
+    },
+    {
+      src: '/images/galeri/foto2.svg',
+      caption: 'Momen bahagia kita',
+      message: 'Semoga pintu rezeki dan kebahagiaan terbuka lebar untukmu.',
+    },
+    {
+      src: '/images/galeri/foto3.svg',
+      caption: 'Tawa yang tak terlupakan',
+      message: 'Semua impian dan cita-citamu semoga satu per satu terwujud.',
+    },
+    {
+      src: '/images/galeri/foto4.svg',
+      caption: 'Cantik, ceria, apa adanya',
+      message: 'Semoga selalu dikelilingi orang-orang yang tulus menyayangimu.',
+    },
+    {
+      src: '/images/galeri/foto5.svg',
+      caption: 'Setiap momen jadi istimewa',
+      message: 'Terima kasih sudah jadi dirimu yang luar biasa, Mila.',
+    },
+    {
+      src: '/images/galeri/foto6.svg',
+      caption: 'Terus bersinar ya',
+      message: 'Kamu pantas mendapatkan semua hal indah di dunia. 💐',
+    },
   ],
 
-  wishes: [
-    { icon: '🌷', title: 'Cantik & Ceria', text: 'Semoga selalu cantik, sehat, dan jadi pribadi yang paling ceria.' },
-    { icon: '🎁', title: 'Rezeki Berlimpah', text: 'Semoga pintu rezeki dan kebahagiaan terbuka lebar untukmu.' },
-    { icon: '🌟', title: 'Mimpi Tercapai', text: 'Semua impian dan cita-citamu semoga satu per satu terwujud.' },
-    { icon: '💖', title: 'Dikelilingi Cinta', text: 'Semoga selalu dikelilingi orang-orang yang tulus menyayangimu.' },
+  slides: [
+    { src: '/images/galeri/foto1.svg', title: 'Momen Manis', subtitle: 'Senyum yang selalu bikin hari jadi lebih cerah.' },
+    { src: '/images/galeri/foto3.svg', title: 'Bahagia Selalu', subtitle: 'Semoga tahun ini penuh tawa dan kenangan indah.' },
+    { src: '/images/galeri/foto5.svg', title: 'Terus Bersinar', subtitle: 'Seindah dirimu yang penuh warna dan cinta.' },
   ],
 
-  secretTitle: 'Kejutan Rahasia 🎉',
+  secretTitle: 'Kejutan Spesial',
   secretMessage:
-    'Selamat ulang tahun, Mila! Terima kasih sudah jadi dirimu yang luar biasa. Ini hadiah kecil: kamu pantas mendapatkan semua hal indah di dunia. 💐',
-
-  socials: [
-    { label: 'Instagram', url: '#' },
-    { label: 'WhatsApp', url: '#' },
-  ],
+    'Selamat ulang tahun, Mila! Terima kasih sudah jadi dirimu yang luar biasa. Kamu pantas mendapatkan semua hal indah di dunia. 💐',
 }
 
 export default config

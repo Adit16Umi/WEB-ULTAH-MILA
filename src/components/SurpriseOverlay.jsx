@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import config from '../config'
+import Emoji3D from './Emoji3D'
 
 export default function SurpriseOverlay({ open, onClose }) {
   return (
@@ -20,7 +21,9 @@ export default function SurpriseOverlay({ open, onClose }) {
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="big">🎉</div>
+            <div className="big">
+              <Emoji3D name="party" size={64} />
+            </div>
             <h3>{config.secretTitle}</h3>
             <p>{config.secretMessage}</p>
             <button className="btn" onClick={onClose}>

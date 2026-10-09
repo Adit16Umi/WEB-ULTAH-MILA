@@ -3,21 +3,23 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Website ulang tahun interaktif dengan animasi, foto, bunga, dan QR code kejutan.",
+  "description": "Website ulang tahun interaktif dengan animasi, foto, bunga, kue, dan hitungan waktu.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "qr": "node scripts/generate-qr.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.0",
     "framer-motion": "^11.0.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-qr-code": "^2.0.12"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.0",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.35.5",
     "vite": "^5.4.0"
   }
 }
