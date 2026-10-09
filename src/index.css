@@ -692,7 +692,7 @@ section {
 /* ================= GALLERY ================= */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
@@ -1250,6 +1250,7 @@ section {
   .cake { transform: scale(0.82); transform-origin: bottom center; }
   .cake-halo { animation: none; filter: blur(28px); opacity: 0.4; }
   .spark { animation-duration: 3s; }
+  .gallery { grid-template-columns: repeat(2, 1fr); gap: 14px; }
 
   /* --- hemat performa di HP --- */
   .bg { animation: none; }
